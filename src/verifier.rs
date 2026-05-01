@@ -47,7 +47,7 @@ pub struct VerificationKernel {
 impl VerificationKernel {
     pub fn new() -> Self {
         Self {
-            universal: Regex::new(r"(?i)\b(all|always|definitiv(?:e|ely)|every|no one|none|never|proven)\b").unwrap(),
+            universal: Regex::new(r"(?i)\b(all|always|definitiv(?:e|ely)|every|no one|no|none|never|proven)\b").unwrap(),
             penalty: Regex::new(r"(?i)\b(might|could|seems|suggests?)\b").unwrap(),
             evidence: Regex::new(r#"\b\d{4}\b|".+?"|\("#).unwrap(),
         }

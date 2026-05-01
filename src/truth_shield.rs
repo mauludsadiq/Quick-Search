@@ -2,6 +2,7 @@ use crate::claim::{map_claim_to_predicates, ClaimPredicatePlan};
 use crate::corpus::BitsetCorpus;
 use crate::quality::{citation_quality, filter_quality_citations, CitationQuality, DEFAULT_MIN_VECTOR_SCORE};
 use crate::ranking::{rank_results, RankedCitation};
+use crate::stance::{assess_stance, summarize_stances, StanceAssessment, StanceSummary};
 use crate::vector::VectorIndex;
 use crate::verifier::{SentenceVerdict, VerificationKernel};
 use anyhow::Result;
@@ -15,6 +16,8 @@ pub struct EvidenceVerdict {
     pub citation_quality: Vec<CitationQuality>,
     pub high_quality_evidence: usize,
     pub warning: Option<String>,
+    pub stance: Vec<StanceAssessment>,
+    pub stance_summary: StanceSummary,
     pub evidence_count: usize,
     pub required_sources: usize,
     pub satisfied: bool,
@@ -44,6 +47,8 @@ pub fn verify_and_retrieve(
         let ranked = rank_results(corpus.papers.as_slice(), &predicate_results, vector_index, &sentence.text, limit_per_claim)?;
         let citation_quality: Vec<CitationQuality> = ranked.iter().map(|c| citation_quality(c, DEFAULT_MIN_VECTOR_SCORE)).collect();
         let citations = filter_quality_citations(ranked, DEFAULT_MIN_VECTOR_SCORE);
+        let stance: Vec<StanceAssessment> = citations.iter().map(|c| assess_stance(&sentence.text, c)).collect();
+        let stance_summary = summarize_stances(&stance);
         let evidence_count = citations.len();
         let high_quality_evidence = evidence_count;
         let required_sources = plan.require_sources;
@@ -57,6 +62,8 @@ pub fn verify_and_retrieve(
               warning,
               high_quality_evidence,
               citation_quality,
+              stance,
+              stance_summary,
             evidence_count,
             required_sources,
             satisfied,
