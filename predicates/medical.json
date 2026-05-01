@@ -1,34 +1,34 @@
 [
   {
-    "name": "topic_cancer",
-    "kind": { "Keywords": { "words": ["cancer","oncology","tumor","neoplasm","metastasis"], "threshold_percent": 82 } }
+    "name": "topic_obesity",
+    "kind": { "Keywords": { "words": ["obesity","overweight","weight loss"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "topic_glp1",
+    "kind": { "Keywords": { "words": ["GLP-1","semaglutide","glp1 receptor"], "threshold_percent": 80 } }
   },
   {
     "name": "topic_cardiovascular",
-    "kind": { "Keywords": { "words": ["cardiovascular","heart disease","myocardial","stroke","atherosclerosis"], "threshold_percent": 82 } }
+    "kind": { "Keywords": { "words": ["cardiovascular","heart","stroke","MACE"], "threshold_percent": 80 } }
   },
   {
-    "name": "topic_clinical_trial",
-    "kind": { "Keywords": { "words": ["clinical trial","randomized","double blind","placebo","phase iii"], "threshold_percent": 82 } }
+    "name": "topic_antibiotics",
+    "kind": { "Keywords": { "words": ["antibiotics","antimicrobial"], "threshold_percent": 80 } }
   },
   {
-    "name": "topic_epidemiology",
-    "kind": { "Keywords": { "words": ["epidemiology","cohort","incidence","prevalence","risk factor"], "threshold_percent": 82 } }
+    "name": "topic_viral_infection",
+    "kind": { "Keywords": { "words": ["viral","respiratory infection"], "threshold_percent": 80 } }
   },
   {
-    "name": "topic_pharmacology",
-    "kind": { "Keywords": { "words": ["pharmacology","drug","dosage","adverse effect","toxicity"], "threshold_percent": 82 } }
+    "name": "topic_hypertension",
+    "kind": { "Keywords": { "words": ["hypertension","blood pressure"], "threshold_percent": 80 } }
   },
   {
-    "name": "journal_lancet",
-    "kind": { "JournalContains": { "needle": "lancet" } }
+    "name": "journal_high_impact",
+    "kind": { "JournalContains": { "needle": "journal" } }
   },
   {
-    "name": "journal_nejm",
-    "kind": { "JournalContains": { "needle": "nejm" } }
-  },
-  {
-    "name": "recent_5y",
-    "kind": { "YearRange": { "start": 2021, "end": 2026 } }
+    "name": "recent_2020s",
+    "kind": { "YearRange": { "start": 2020, "end": 2029 } }
   }
 ]

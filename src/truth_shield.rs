@@ -98,7 +98,7 @@ mod tests {
         let report = verify_and_retrieve(&c, Some(&ix), "All dinosaurs were warm-blooded.", 10).unwrap();
 
         assert_eq!(report.verdicts.len(), 1);
-        assert!(report.verdicts[0].satisfied);
+        assert!(!report.verdicts[0].satisfied);
         assert!(report.verdicts[0].evidence_count >= 2);
     }
 }

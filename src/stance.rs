@@ -93,10 +93,14 @@ fn contains_affirmative_evidence(text: &str) -> bool {
         || text.contains("show")
         || text.contains("evidence")
         || text.contains("support")
-        || text.contains("thermoregulation")
-        || text.contains("endothermy")
-        || text.contains("warm-blooded")
-        || text.contains("warm blooded")
+        || text.contains("reduce")
+        || text.contains("reduced")
+        || text.contains("decrease")
+        || text.contains("lower")
+        || text.contains("improve")
+        || text.contains("associated with")
+        || text.contains("leads to")
+        || text.contains("results in")
 }
 
 fn contains_negative_evidence(text: &str) -> bool {
