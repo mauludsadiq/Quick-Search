@@ -1,0 +1,34 @@
+[
+  {
+    "name": "topic_revenue",
+    "kind": { "Keywords": { "words": ["revenue","sales","income"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "topic_margin",
+    "kind": { "Keywords": { "words": ["margin","gross margin","profit margin"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "topic_risk",
+    "kind": { "Keywords": { "words": ["risk","risk factors","uncertainty"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "topic_supply_chain",
+    "kind": { "Keywords": { "words": ["supply","supplier","manufacturing","disruption"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "topic_interest_rates",
+    "kind": { "Keywords": { "words": ["interest rate","rates","funding cost","liquidity"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "topic_cloud",
+    "kind": { "Keywords": { "words": ["cloud","azure","server products"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "sec_filing",
+    "kind": { "JournalContains": { "needle": "sec form 10-k" } }
+  },
+  {
+    "name": "recent_2020s",
+    "kind": { "YearRange": { "start": 2020, "end": 2029 } }
+  }
+]

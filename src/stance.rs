@@ -29,7 +29,7 @@ pub fn assess_stance(claim: &str, citation: &RankedCitation) -> StanceAssessment
     let text_l = format!("{} {}", citation.title, citation.preview).to_ascii_lowercase();
 
     let claim_negative = contains_negative_universal(&claim_l);
-    let evidence_affirmative = contains_affirmative_evidence(&text_l);
+    let evidence_affirmative = contains_affirmative_evidence(&text_l) || contains_finance_risk_evidence(&text_l);
     let evidence_negative = contains_negative_evidence(&text_l);
 
     let claim_affirmative = contains_affirmative_claim(&claim_l);
@@ -85,6 +85,19 @@ fn contains_affirmative_claim(text: &str) -> bool {
 
 fn contains_negative_universal(text: &str) -> bool {
     text.contains("no ") || text.contains("none") || text.contains("never") || text.contains("not ")
+}
+
+fn contains_finance_risk_evidence(text: &str) -> bool {
+    text.contains("risk")
+        || text.contains("risks")
+        || text.contains("shortage")
+        || text.contains("shortages")
+        || text.contains("disruption")
+        || text.contains("disruptions")
+        || text.contains("adversely affect")
+        || text.contains("materially adversely affect")
+        || text.contains("depends on")
+        || text.contains("competition")
 }
 
 fn contains_affirmative_evidence(text: &str) -> bool {

@@ -1,0 +1,6 @@
+id,title,abstract,year,journal,authors,doi
+1,Apple 2023 Form 10-K Risk Factors,"The company faces substantial competition in smartphones, personal computers, tablets, wearables, and services, and failure to compete effectively could materially adversely affect revenue and margins.",2023,SEC Form 10-K,Apple Inc.,sec:aapl-2023-10k
+2,Apple 2023 Form 10-K Supply Chain,"The company depends on component suppliers and manufacturing partners, and supply shortages or disruptions could adversely affect product availability and financial results.",2023,SEC Form 10-K,Apple Inc.,sec:aapl-2023-supply
+3,Microsoft 2023 Form 10-K Cloud Revenue,"Cloud services revenue increased due to growth in server products and cloud services, including Azure and other cloud services.",2023,SEC Form 10-K,Microsoft Corp.,sec:msft-2023-cloud
+4,Tesla 2023 Form 10-K Automotive Margins,"Automotive gross margin may decline due to pricing pressure, increased competition, production costs, and changes in product mix.",2023,SEC Form 10-K,Tesla Inc.,sec:tsla-2023-margin
+5,Regional Bank 2023 Form 10-K Interest Rate Risk,"Rapid increases in interest rates may reduce the fair value of securities, increase funding costs, and adversely affect liquidity.",2023,SEC Form 10-K,Example Regional Bank,sec:bank-2023-rates
