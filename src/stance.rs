@@ -32,10 +32,13 @@ pub fn assess_stance(claim: &str, citation: &RankedCitation) -> StanceAssessment
     let evidence_affirmative = contains_affirmative_evidence(&text_l);
     let evidence_negative = contains_negative_evidence(&text_l);
 
+    let claim_affirmative = contains_affirmative_claim(&claim_l);
     let stance = if claim_negative && evidence_affirmative {
         Stance::Contradicts
     } else if claim_negative && evidence_negative {
         Stance::Supports
+    } else if claim_affirmative && evidence_negative {
+        Stance::Contradicts
     } else if !claim_negative && evidence_affirmative {
         Stance::Supports
     } else {
@@ -70,6 +73,14 @@ pub fn summarize_stances(assessments: &[StanceAssessment]) -> StanceSummary {
     };
 
     StanceSummary { supporting, contradicting, neutral, dominant_stance }
+}
+
+fn contains_affirmative_claim(text: &str) -> bool {
+    text.contains("constitutional")
+        || text.contains("valid")
+        || text.contains("lawful")
+        || text.contains("permitted")
+        || text.contains("allowed")
 }
 
 fn contains_negative_universal(text: &str) -> bool {

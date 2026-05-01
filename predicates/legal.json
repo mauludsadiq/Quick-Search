@@ -1,34 +1,38 @@
 [
   {
-    "name": "topic_due_process",
-    "kind": { "Keywords": { "words": ["due process","procedural due process","substantive due process","fourteenth amendment"], "threshold_percent": 82 } }
+    "name": "topic_fourth_amendment",
+    "kind": { "Keywords": { "words": ["Fourth Amendment", "unreasonable searches", "searches and seizures"], "threshold_percent": 82 } }
   },
   {
-    "name": "topic_equal_protection",
-    "kind": { "Keywords": { "words": ["equal protection","strict scrutiny","rational basis","suspect class"], "threshold_percent": 82 } }
+    "name": "topic_warrant",
+    "kind": { "Keywords": { "words": ["warrant", "warrantless", "warrant requirement"], "threshold_percent": 82 } }
   },
   {
-    "name": "topic_contract",
-    "kind": { "Keywords": { "words": ["contract","breach","consideration","offer and acceptance","damages"], "threshold_percent": 82 } }
+    "name": "topic_privacy",
+    "kind": { "Keywords": { "words": ["privacy", "expectation of privacy", "reasonable expectation"], "threshold_percent": 82 } }
   },
   {
-    "name": "topic_arbitration",
-    "kind": { "Keywords": { "words": ["arbitration","faa","federal arbitration act","arbitrability","arbitration clause"], "threshold_percent": 82 } }
+    "name": "topic_gps_tracking",
+    "kind": { "Keywords": { "words": ["GPS tracking","GPS","tracking", "tracking device", "location tracking"], "threshold_percent": 82 } }
   },
   {
-    "name": "topic_qualified_immunity",
-    "kind": { "Keywords": { "words": ["qualified immunity","clearly established","section 1983","1983 claim"], "threshold_percent": 82 } }
+    "name": "topic_cell_site_location",
+    "kind": { "Keywords": { "words": ["cell-site location", "CSLI", "location data"], "threshold_percent": 82 } }
+  },
+  {
+    "name": "topic_exigent_circumstances",
+    "kind": { "Keywords": { "words": ["exigent circumstances", "emergency exception", "warrant exception"], "threshold_percent": 82 } }
   },
   {
     "name": "court_scotus",
     "kind": { "JournalContains": { "needle": "supreme court" } }
   },
   {
-    "name": "court_circuit",
-    "kind": { "JournalContains": { "needle": "court of appeals" } }
+    "name": "recent_2010s",
+    "kind": { "YearRange": { "start": 2010, "end": 2019 } }
   },
   {
-    "name": "recent_5y",
-    "kind": { "YearRange": { "start": 2021, "end": 2026 } }
+    "name": "recent_2020s",
+    "kind": { "YearRange": { "start": 2020, "end": 2029 } }
   }
 ]

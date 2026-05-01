@@ -52,8 +52,16 @@ pub fn verify_and_retrieve(
         let evidence_count = citations.len();
         let high_quality_evidence = evidence_count;
         let required_sources = plan.require_sources;
-        let satisfied = high_quality_evidence >= required_sources;
-        let warning = if satisfied { None } else { Some(format!("Insufficient quality evidence. Only {} semantically relevant source(s) found; {} required.", high_quality_evidence, required_sources)) };
+        let satisfied = high_quality_evidence >= required_sources && stance_summary.contradicting == 0 && stance_summary.supporting > 0;
+        let warning = if satisfied {
+            None
+        } else if stance_summary.contradicting > 0 {
+            Some(format!("Claim is contradicted by {} semantically relevant source(s).", stance_summary.contradicting))
+        } else if stance_summary.supporting == 0 {
+            Some("No semantically relevant source supports the claim stance.".to_string())
+        } else {
+            Some(format!("Insufficient quality evidence. Only {} semantically relevant source(s) found; {} required.", high_quality_evidence, required_sources))
+        };
 
         verdicts.push(EvidenceVerdict {
             sentence,
