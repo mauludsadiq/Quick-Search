@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use quick_search::{
-    available_backends, map_claim_to_predicates, rank_results, run_large_corpus_bench,
+    available_backends, map_claim_to_predicates, with_receipt, CorpusManifest, rank_results, run_large_corpus_bench,
     verify_and_retrieve, analyze_claim_spectrum, BitsetCorpus, ComputeBackend, VerificationKernel, VectorIndex,
 };
 use serde_json::json;
@@ -114,17 +114,22 @@ fn main() -> Result<()> {
             corpus.save(&out)?;
             let ix = VectorIndex::build(&corpus.papers);
             ix.save(out.join("vector_index.json"))?;
-            println!("{}", serde_json::to_string_pretty(&json!({"ok": true, "docs": n, "out": out}))?);
+            let manifest = CorpusManifest::from_art_dir(&out, n, corpus.registry.len())?;
+            manifest.write(&out)?;
+            let output = json!({"ok": true, "docs": n, "out": out, "manifest": manifest});
+            println!("{}", serde_json::to_string_pretty(&with_receipt("build", json!({"csv": csv, "out": output["out"]}), output)?)?);
         }
         Command::Query { corpus, include, exclude, limit } => {
             let corpus = BitsetCorpus::load(corpus)?;
             let results = corpus.query(&include, &exclude, limit)?;
-            println!("{}", serde_json::to_string_pretty(&json!({"ok": true, "results": results}))?);
+            let output = json!({"ok": true, "results": results});
+            println!("{}", serde_json::to_string_pretty(&with_receipt("query", json!({"include": include, "exclude": exclude, "limit": limit}), output)?)?);
         }
         Command::Verify { text, file, phase } => {
             let input = read_input(text, file)?;
             let report = VerificationKernel::new().verify_text(&input, phase);
-            println!("{}", serde_json::to_string_pretty(&report)?);
+            let output = serde_json::to_value(&report)?;
+              println!("{}", serde_json::to_string_pretty(&with_receipt("verify", json!({"text": input, "phase": phase}), output)?)?);
         }
         Command::Counts { corpus } => {
             let corpus = BitsetCorpus::load(corpus)?;
@@ -161,7 +166,8 @@ fn main() -> Result<()> {
             let corpus_obj = BitsetCorpus::load(&corpus)?;
             let ix = VectorIndex::load(corpus.join("vector_index.json")).ok();
             let report = verify_and_retrieve(&corpus_obj, ix.as_ref(), &input, limit)?;
-            println!("{}", serde_json::to_string_pretty(&report)?);
+            let output = serde_json::to_value(&report)?;
+              println!("{}", serde_json::to_string_pretty(&with_receipt("truth-shield", json!({"text": input, "limit": limit}), output)?)?);
         }
         Command::Bench { docs, repeats, backend } => {
             let backend = parse_backend(&backend)?;
@@ -172,7 +178,8 @@ fn main() -> Result<()> {
             let corpus_obj = BitsetCorpus::load(&corpus)?;
             let ix = VectorIndex::load(corpus.join("vector_index.json")).ok();
             let report = analyze_claim_spectrum(&corpus_obj, ix.as_ref(), &claims, limit)?;
-            println!("{}", serde_json::to_string_pretty(&report)?);
+              let output = serde_json::to_value(&report)?;
+              println!("{}", serde_json::to_string_pretty(&with_receipt("spectrum", json!({"claims": claims, "limit": limit}), output)?)?);
         }
         Command::Backends => {
             println!("{}", serde_json::to_string_pretty(&available_backends())?);

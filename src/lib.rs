@@ -12,6 +12,9 @@ pub mod stance;
 pub mod verifier;
 pub mod vector;
 pub mod truth_shield;
+pub mod hash;
+pub mod manifest;
+pub mod receipt;
 
 pub use accelerator::{available_backends, fused_and_popcount_3way_resident, fused_and_popcount_3way_resident_parallel, fused_and_popcount_3way_resident_mode, ComputeBackend, KernelReport};
 pub use bench::{run_large_corpus_bench, LargeCorpusBenchReport};
@@ -23,6 +26,9 @@ pub use predicates::{build_registry, load_predicate_pack, Predicate, PredicateKi
 pub use quality::{citation_quality, filter_quality_citations, CitationQuality, DEFAULT_MIN_VECTOR_SCORE};
 pub use ranking::{rank_results, RankedCitation};
 pub use stance::{assess_stance, summarize_stances, Stance, StanceAssessment, StanceSummary};
+pub use hash::{sha256_bytes, sha256_file, sha256_json};
+pub use manifest::{CorpusManifest, CORPUS_SCHEMA_VERSION};
+pub use receipt::{with_receipt, RunReceipt};
 pub use truth_shield::{verify_and_retrieve, EvidenceVerdict, TruthShieldReport};
 pub use verifier::{SentenceVerdict, VerificationKernel, VerificationReport};
 pub use vector::{VectorHit, VectorIndex};
