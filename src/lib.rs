@@ -13,7 +13,7 @@ pub use accelerator::{available_backends, fused_and_popcount_3way_resident, fuse
 pub use bench::{run_large_corpus_bench, LargeCorpusBenchReport};
 pub use claim::{map_claim_to_predicates, ClaimPredicatePlan};
 pub use corpus::{BitsetCorpus, Paper, QueryResult};
-pub use predicates::{build_registry, Predicate, PredicateKind};
+pub use predicates::{build_registry, load_predicate_pack, Predicate, PredicateKind};
 pub use ranking::{rank_results, RankedCitation};
 pub use truth_shield::{verify_and_retrieve, EvidenceVerdict, TruthShieldReport};
 pub use verifier::{SentenceVerdict, VerificationKernel, VerificationReport};

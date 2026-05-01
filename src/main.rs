@@ -22,6 +22,8 @@ enum Command {
         csv: PathBuf,
         #[arg(long, default_value = "data/onestep")]
         out: PathBuf,
+        #[arg(long)]
+        predicates: Option<PathBuf>,
     },
     Query {
         #[arg(long, default_value = "data/onestep")]
@@ -98,8 +100,8 @@ enum Command {
 fn main() -> Result<()> {
     let cli = Cli::parse();
     match cli.command {
-        Command::Build { csv, out } => {
-            let corpus = BitsetCorpus::from_csv(&csv)?;
+        Command::Build { csv, out, predicates } => {
+            let corpus = BitsetCorpus::from_csv_with_predicate_pack(&csv, predicates.as_ref())?;
             let n = corpus.papers.len();
             corpus.save(&out)?;
             let ix = VectorIndex::build(&corpus.papers);

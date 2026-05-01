@@ -1,5 +1,5 @@
 use crate::bitset::{read_named_bitsets, write_named_bitsets, NamedBitset, PackedBitset};
-use crate::predicates::{build_registry, Predicate};
+use crate::predicates::{build_registry, load_predicate_pack, Predicate};
 use anyhow::{anyhow, Context, Result};
 use csv::StringRecord;
 use rusqlite::{params, Connection};
@@ -43,6 +43,16 @@ pub struct BitsetCorpus {
 impl BitsetCorpus {
     pub fn new() -> Self {
         let registry = build_registry();
+        Self::from_registry(registry)
+    }
+
+    pub fn from_predicate_pack(path: impl AsRef<Path>) -> Result<Self> {
+        let path_str = path.as_ref().to_string_lossy().to_string();
+        let registry = load_predicate_pack(&path_str).map_err(|e| anyhow!("load predicate pack {}: {}", path.as_ref().display(), e))?;
+        Ok(Self::from_registry(registry))
+    }
+
+    pub fn from_registry(registry: BTreeMap<String, Predicate>) -> Self {
         let bits = registry.keys().map(|k| (k.clone(), PackedBitset::new())).collect();
         Self { registry, papers: Vec::new(), bits }
     }
@@ -57,10 +67,17 @@ impl BitsetCorpus {
     }
 
     pub fn from_csv(csv_path: impl AsRef<Path>) -> Result<Self> {
+        Self::from_csv_with_predicate_pack(csv_path, None::<&Path>)
+    }
+
+    pub fn from_csv_with_predicate_pack(csv_path: impl AsRef<Path>, pack_path: Option<impl AsRef<Path>>) -> Result<Self> {
         let mut rdr = csv::Reader::from_path(csv_path.as_ref())
             .with_context(|| format!("read CSV {}", csv_path.as_ref().display()))?;
         let headers = rdr.headers()?.clone();
-        let mut corpus = Self::new();
+        let mut corpus = match pack_path {
+            Some(path) => Self::from_predicate_pack(path)?,
+            None => Self::new(),
+        };
         for row in rdr.records() {
             let row = row?;
             corpus.add(parse_paper(&headers, &row)?);
@@ -81,7 +98,7 @@ impl BitsetCorpus {
     pub fn load(art_dir: impl AsRef<Path>) -> Result<Self> {
         let art_dir = art_dir.as_ref();
         let papers = load_metadata(art_dir.join("metadata.sqlite"))?;
-        let registry = build_registry();
+        let registry: BTreeMap<String, Predicate> = serde_json::from_slice(&std::fs::read(art_dir.join("registry.json"))?)?;
         let mut bits = BTreeMap::new();
         for named in read_named_bitsets(art_dir.join("predicates.qsbit"))? {
             if named.bitset.len() != papers.len() {

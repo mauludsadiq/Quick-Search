@@ -1,0 +1,34 @@
+[
+  {
+    "name": "topic_due_process",
+    "kind": { "Keywords": { "words": ["due process","procedural due process","substantive due process","fourteenth amendment"], "threshold_percent": 82 } }
+  },
+  {
+    "name": "topic_equal_protection",
+    "kind": { "Keywords": { "words": ["equal protection","strict scrutiny","rational basis","suspect class"], "threshold_percent": 82 } }
+  },
+  {
+    "name": "topic_contract",
+    "kind": { "Keywords": { "words": ["contract","breach","consideration","offer and acceptance","damages"], "threshold_percent": 82 } }
+  },
+  {
+    "name": "topic_arbitration",
+    "kind": { "Keywords": { "words": ["arbitration","faa","federal arbitration act","arbitrability","arbitration clause"], "threshold_percent": 82 } }
+  },
+  {
+    "name": "topic_qualified_immunity",
+    "kind": { "Keywords": { "words": ["qualified immunity","clearly established","section 1983","1983 claim"], "threshold_percent": 82 } }
+  },
+  {
+    "name": "court_scotus",
+    "kind": { "JournalContains": { "needle": "supreme court" } }
+  },
+  {
+    "name": "court_circuit",
+    "kind": { "JournalContains": { "needle": "court of appeals" } }
+  },
+  {
+    "name": "recent_5y",
+    "kind": { "YearRange": { "start": 2021, "end": 2026 } }
+  }
+]

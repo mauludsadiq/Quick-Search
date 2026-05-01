@@ -64,18 +64,13 @@ fn fuzzy_substring_match(needle: &str, haystack: &str, threshold: f64) -> bool {
 }
 
 pub fn build_registry() -> BTreeMap<String, Predicate> {
-    let predicates = vec![
-        Predicate::keywords("topic_dinosaurs", &["dinosaur", "theropod", "sauropod", "ceratopsian"], 80),
-        Predicate::keywords("topic_endothermy", &["endothermy", "warm-blooded", "metabolic rate", "thermoregulation"], 80),
-        Predicate::keywords("topic_isotopes", &["oxygen isotope", "isotope analysis", "δ18O", "d18o"], 80),
-        Predicate::keywords("topic_histology", &["bone histology", "haversian", "cortical bone"], 80),
-        Predicate::year_range("recent_2020s", 2020, 2029),
-        Predicate::year_range("recent_2010s", 2010, 2019),
-        Predicate::journal("journal_nature", "Nature"),
-        Predicate::journal("journal_science", "Science"),
-        Predicate::journal("journal_isci", "iScience"),
-    ];
-    predicates.into_iter().map(|p| (p.name.clone(), p)).collect()
+    load_predicate_pack("predicates/science.json").unwrap_or_default()
+}
+
+pub fn load_predicate_pack(path: &str) -> Result<BTreeMap<String, Predicate>, Box<dyn std::error::Error>> {
+    let data = std::fs::read_to_string(path)?;
+    let preds: Vec<Predicate> = serde_json::from_str(&data)?;
+    Ok(preds.into_iter().map(|p| (p.name.clone(), p)).collect())
 }
 
 #[cfg(test)]

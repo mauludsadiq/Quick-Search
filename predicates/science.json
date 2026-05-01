@@ -1,0 +1,30 @@
+[
+  {
+    "name": "topic_dinosaurs",
+    "kind": { "Keywords": { "words": ["dinosaur","theropod","sauropod","ceratopsian"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "topic_endothermy",
+    "kind": { "Keywords": { "words": ["endothermy","warm-blooded","metabolic rate","thermoregulation"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "topic_isotopes",
+    "kind": { "Keywords": { "words": ["oxygen isotope","isotope analysis","δ18O","d18o"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "topic_histology",
+    "kind": { "Keywords": { "words": ["bone histology","haversian","cortical bone"], "threshold_percent": 80 } }
+  },
+  {
+    "name": "recent_2020s",
+    "kind": { "YearRange": { "start": 2020, "end": 2029 } }
+  },
+  {
+    "name": "journal_nature",
+    "kind": { "JournalContains": { "needle": "nature" } }
+  },
+  {
+    "name": "journal_science",
+    "kind": { "JournalContains": { "needle": "science" } }
+  }
+]
