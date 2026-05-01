@@ -1,5 +1,6 @@
 use crate::bitset::PackedBitset;
 use anyhow::{anyhow, Result};
+use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::time::Instant;
 
@@ -18,6 +19,7 @@ pub struct KernelReport {
     pub total_last: u64,
     pub elapsed_s: f64,
     pub throughput_words_per_s: f64,
+    pub parallel: bool,
 }
 
 pub fn available_backends() -> Vec<ComputeBackend> {
@@ -61,23 +63,45 @@ pub fn fused_and_popcount_3way_resident(
     requested: Option<ComputeBackend>,
     repeats: usize,
 ) -> Result<KernelReport> {
+    fused_and_popcount_3way_resident_mode(a, b, c, requested, repeats, false)
+}
+
+pub fn fused_and_popcount_3way_resident_parallel(
+    a: &PackedBitset,
+    b: &PackedBitset,
+    c: &PackedBitset,
+    requested: Option<ComputeBackend>,
+    repeats: usize,
+) -> Result<KernelReport> {
+    fused_and_popcount_3way_resident_mode(a, b, c, requested, repeats, true)
+}
+
+pub fn fused_and_popcount_3way_resident_mode(
+    a: &PackedBitset,
+    b: &PackedBitset,
+    c: &PackedBitset,
+    requested: Option<ComputeBackend>,
+    repeats: usize,
+    parallel: bool,
+) -> Result<KernelReport> {
     if a.len() != b.len() || a.len() != c.len() {
         return Err(anyhow!("A,B,C must have equal bit lengths"));
     }
 
     let backend = select_backend(requested);
     match backend {
-        ComputeBackend::Cpu => fused_and_popcount_cpu(a, b, c, repeats),
+        ComputeBackend::Cpu => fused_and_popcount_cpu_mode(a, b, c, repeats, parallel),
         ComputeBackend::Metal => fused_and_popcount_metal(a, b, c, repeats),
         ComputeBackend::Cuda => fused_and_popcount_cuda(a, b, c, repeats),
     }
 }
 
-fn fused_and_popcount_cpu(
+fn fused_and_popcount_cpu_mode(
     a: &PackedBitset,
     b: &PackedBitset,
     c: &PackedBitset,
     repeats: usize,
+    parallel: bool,
 ) -> Result<KernelReport> {
     let repeats = repeats.max(1);
     let words = a.words().len();
@@ -85,10 +109,15 @@ fn fused_and_popcount_cpu(
 
     let t0 = Instant::now();
     for _ in 0..repeats {
-        total_last = 0;
-        for i in 0..words {
-            total_last += ((a.words()[i] & b.words()[i]) & !c.words()[i]).count_ones() as u64;
-        }
+        total_last = if parallel {
+            (0..words).into_par_iter().map(|i| ((a.words()[i] & b.words()[i]) & !c.words()[i]).count_ones() as u64).sum()
+        } else {
+            let mut total = 0u64;
+            for i in 0..words {
+                total += ((a.words()[i] & b.words()[i]) & !c.words()[i]).count_ones() as u64;
+            }
+            total
+        };
         total_last = clear_tail_overcount(total_last, a, b, c)?;
     }
     let elapsed_s = t0.elapsed().as_secs_f64();
@@ -100,6 +129,7 @@ fn fused_and_popcount_cpu(
         total_last,
         elapsed_s,
         throughput_words_per_s: (words * repeats) as f64 / elapsed_s.max(1e-12),
+        parallel,
     })
 }
 
@@ -110,7 +140,7 @@ fn fused_and_popcount_metal(
     c: &PackedBitset,
     repeats: usize,
 ) -> Result<KernelReport> {
-    fused_and_popcount_cpu(a, b, c, repeats).map(|mut r| {
+    fused_and_popcount_cpu_mode(a, b, c, repeats, false).map(|mut r| {
         r.backend = ComputeBackend::Metal;
         r
     })
@@ -136,7 +166,7 @@ fn fused_and_popcount_cuda(
         return Err(anyhow!("CUDA backend requested but CUDA runtime was not detected"));
     }
 
-    fused_and_popcount_cpu(a, b, c, repeats).map(|mut r| {
+    fused_and_popcount_cpu_mode(a, b, c, repeats, false).map(|mut r| {
         r.backend = ComputeBackend::Cuda;
         r
     })
