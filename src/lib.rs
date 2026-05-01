@@ -1,8 +1,20 @@
+pub mod accelerator;
+pub mod bench;
 pub mod bitset;
+pub mod claim;
 pub mod corpus;
 pub mod predicates;
+pub mod ranking;
 pub mod verifier;
+pub mod vector;
+pub mod truth_shield;
 
+pub use accelerator::{available_backends, fused_and_popcount_3way_resident, ComputeBackend, KernelReport};
+pub use bench::{run_large_corpus_bench, LargeCorpusBenchReport};
+pub use claim::{map_claim_to_predicates, ClaimPredicatePlan};
 pub use corpus::{BitsetCorpus, Paper, QueryResult};
 pub use predicates::{build_registry, Predicate, PredicateKind};
+pub use ranking::{rank_results, RankedCitation};
+pub use truth_shield::{verify_and_retrieve, EvidenceVerdict, TruthShieldReport};
 pub use verifier::{SentenceVerdict, VerificationKernel, VerificationReport};
+pub use vector::{VectorHit, VectorIndex};
