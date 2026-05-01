@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use quick_search::{
     available_backends, map_claim_to_predicates, rank_results, run_large_corpus_bench,
-    verify_and_retrieve, BitsetCorpus, ComputeBackend, VerificationKernel, VectorIndex,
+    verify_and_retrieve, analyze_claim_spectrum, BitsetCorpus, ComputeBackend, VerificationKernel, VectorIndex,
 };
 use serde_json::json;
 use std::path::PathBuf;
@@ -94,6 +94,14 @@ enum Command {
         #[arg(long, default_value = "cpu")]
         backend: String,
     },
+    Spectrum {
+        #[arg(long, default_value = "data/onestep")]
+        corpus: PathBuf,
+        #[arg(long = "claim")]
+        claims: Vec<String>,
+        #[arg(long, default_value_t = 10)]
+        limit: usize,
+    },
     Backends,
 }
 
@@ -158,6 +166,12 @@ fn main() -> Result<()> {
         Command::Bench { docs, repeats, backend } => {
             let backend = parse_backend(&backend)?;
             let report = run_large_corpus_bench(docs, repeats, Some(backend))?;
+            println!("{}", serde_json::to_string_pretty(&report)?);
+        }
+        Command::Spectrum { corpus, claims, limit } => {
+            let corpus_obj = BitsetCorpus::load(&corpus)?;
+            let ix = VectorIndex::load(corpus.join("vector_index.json")).ok();
+            let report = analyze_claim_spectrum(&corpus_obj, ix.as_ref(), &claims, limit)?;
             println!("{}", serde_json::to_string_pretty(&report)?);
         }
         Command::Backends => {

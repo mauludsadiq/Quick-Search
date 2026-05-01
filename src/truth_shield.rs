@@ -1,4 +1,5 @@
 use crate::claim::{map_claim_to_predicates, ClaimPredicatePlan};
+use crate::claim_type::ClaimType;
 use crate::corpus::BitsetCorpus;
 use crate::quality::{citation_quality, filter_quality_citations, CitationQuality, DEFAULT_MIN_VECTOR_SCORE};
 use crate::ranking::{rank_results, RankedCitation};
@@ -12,6 +13,7 @@ use serde::{Deserialize, Serialize};
 pub struct EvidenceVerdict {
     pub sentence: SentenceVerdict,
     pub plan: ClaimPredicatePlan,
+    pub claim_type: ClaimType,
     pub citations: Vec<RankedCitation>,
     pub citation_quality: Vec<CitationQuality>,
     pub high_quality_evidence: usize,
@@ -38,11 +40,9 @@ pub fn verify_and_retrieve(
     let mut verdicts = Vec::new();
 
     for sentence in verification.results {
-        if sentence.verdict != "needs_evidence" {
-            continue;
-        }
-
-        let plan = map_claim_to_predicates(&sentence.text);
+          let claim_type = ClaimType::classify(&sentence.text);
+          let mut plan = map_claim_to_predicates(&sentence.text);
+        plan.require_sources = claim_type.required_sources();
         let predicate_results = corpus.query(&plan.include, &plan.exclude, limit_per_claim.max(plan.require_sources))?;
         let ranked = rank_results(corpus.papers.as_slice(), &predicate_results, vector_index, &sentence.text, limit_per_claim)?;
         let citation_quality: Vec<CitationQuality> = ranked.iter().map(|c| citation_quality(c, DEFAULT_MIN_VECTOR_SCORE)).collect();
@@ -58,6 +58,7 @@ pub fn verify_and_retrieve(
         verdicts.push(EvidenceVerdict {
             sentence,
             plan,
+              claim_type,
             citations,
               warning,
               high_quality_evidence,
