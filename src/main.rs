@@ -102,6 +102,12 @@ enum Command {
         #[arg(long, default_value_t = 10)]
         limit: usize,
     },
+      IngestSec {
+          #[arg(long)]
+          ticker: String,
+          #[arg(long)]
+          out: PathBuf,
+      },
     Backends,
 }
 
@@ -180,6 +186,11 @@ fn main() -> Result<()> {
             let report = analyze_claim_spectrum(&corpus_obj, ix.as_ref(), &claims, limit)?;
               let output = serde_json::to_value(&report)?;
               println!("{}", serde_json::to_string_pretty(&with_receipt("spectrum", json!({"claims": claims, "limit": limit}), output)?)?);
+        }
+        Command::IngestSec { ticker, out } => {
+            quick_search::fetch_latest_10k_csv(&ticker, &out)?;
+            let output = json!({"ok": true, "ticker": ticker, "out": out});
+            println!("{}", serde_json::to_string_pretty(&with_receipt("ingest-sec", output.clone(), output)?)?);
         }
         Command::Backends => {
             println!("{}", serde_json::to_string_pretty(&available_backends())?);

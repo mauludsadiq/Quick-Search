@@ -42,6 +42,7 @@ pub fn verify_and_retrieve(
     for sentence in verification.results {
           let claim_type = ClaimType::classify(&sentence.text);
           let mut plan = map_claim_to_predicates(&sentence.text);
+          enrich_finance_plan(&sentence.text, &mut plan);
         plan.require_sources = claim_type.required_sources();
         let predicate_results = corpus.query(&plan.include, &plan.exclude, limit_per_claim.max(plan.require_sources))?;
         let ranked = rank_results(corpus.papers.as_slice(), &predicate_results, vector_index, &sentence.text, limit_per_claim)?;
@@ -77,6 +78,34 @@ pub fn verify_and_retrieve(
             required_sources,
             satisfied,
         });
+
+fn enrich_finance_plan(claim: &str, plan: &mut ClaimPredicatePlan) {
+    let t = claim.to_ascii_lowercase();
+    if t.contains("supply chain") || t.contains("supplier") || t.contains("manufacturing") {
+        push_unique(&mut plan.include, "topic_supply_chain");
+    }
+    if t.contains("risk") || t.contains("uncertainty") || t.contains("adversely") {
+        push_unique(&mut plan.include, "topic_risk");
+    }
+    if t.contains("revenue") || t.contains("sales") {
+        push_unique(&mut plan.include, "topic_revenue");
+    }
+    if t.contains("margin") {
+        push_unique(&mut plan.include, "topic_margin");
+    }
+    if t.contains("interest rate") || t.contains("liquidity") {
+        push_unique(&mut plan.include, "topic_interest_rates");
+    }
+    if t.contains("cloud") || t.contains("azure") {
+        push_unique(&mut plan.include, "topic_cloud");
+    }
+}
+
+fn push_unique(xs: &mut Vec<String>, value: &str) {
+    if !xs.iter().any(|x| x == value) {
+        xs.push(value.to_string());
+    }
+}
     }
 
     Ok(TruthShieldReport { verdicts })

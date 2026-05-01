@@ -13,6 +13,7 @@ pub mod verifier;
 pub mod vector;
 pub mod truth_shield;
 pub mod hash;
+pub mod sec_ingest;
 pub mod manifest;
 pub mod receipt;
 
@@ -30,5 +31,6 @@ pub use hash::{sha256_bytes, sha256_file, sha256_json};
 pub use manifest::{CorpusManifest, CORPUS_SCHEMA_VERSION};
 pub use receipt::{with_receipt, RunReceipt};
 pub use truth_shield::{verify_and_retrieve, EvidenceVerdict, TruthShieldReport};
+pub use sec_ingest::{fetch_company_by_ticker, fetch_latest_10k_csv, SecCompany};
 pub use verifier::{SentenceVerdict, VerificationKernel, VerificationReport};
 pub use vector::{VectorHit, VectorIndex};
