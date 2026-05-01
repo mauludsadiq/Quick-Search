@@ -105,6 +105,13 @@ fn contains_negative_evidence(text: &str) -> bool {
         || text.contains("not support")
         || text.contains("does not support")
         || text.contains("fails to show")
+        || text.contains("violates")
+        || text.contains("violate")
+        || text.contains("unconstitutional")
+        || text.contains("deemed unconstitutional")
+        || text.contains("requires a warrant")
+        || text.contains("require a warrant")
+        || text.contains("warrant was deemed unconstitutional")
 }
 
 #[cfg(test)]
